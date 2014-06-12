@@ -1,0 +1,50 @@
+<project name="simpleCompile" default="run" basedir=".">
+  <target name="clean">
+          <delete dir="build"/>
+              </target>
+    <target name="compile">
+     <mkdir dir="build/classes"/>
+     <echo>this is a simple build</echo>
+      <javac srcdir="src" destdir="build/classes"  includeantruntime="false"/>
+       </target>
+
+    <target name="jar" depends="compile">
+     <mkdir dir="build/jar"/>
+      <jar destfile="build/jar/HelloWorld.jar" basedir="build/classes">
+       <manifest>
+       <attribute name="Main-Class" value="HelloWorld"/>
+        </manifest>
+         </jar>
+       </target>
+    
+        <target name="run"  depends="jar,compile">
+        <java jar="build/jar/HelloWorld.jar" fork="true"/>
+         </target> 
+       <target name="javadoc" depends="run,jar,compile">
+       <javadoc packagenames="HelloWorld"
+                sourcepath="src"
+                destdir="build"
+                author="true"
+                windowtitle="HelloWorld"
+                doctitle="HelloWorld"
+            />
+            </target> 
+            <target name="unit-test">
+            <junit printsummary="false" fork="off" haltonfailure="yes">
+            <classpath>
+            <pathelement location="."/>
+            <pathelement location="build/jar/HelloWorld.jar"/>
+            <pathelement path="build/classes"/>
+            <include name="**/*.jar"/>
+            </classpath>
+            <formatter type="plain" usefile="false"/>
+            <test name="first-test"/>
+            </junit>
+            </target>          
+            <target name="junitreport" depends="unit-test">
+            <junitreport todir="/opt/localrepo">
+            <fileset dir="/opt/localrepo"  includes="test.xml"/>
+            <report todir="/opt/localrepo"/>
+            </junitreport>
+            </target>
+              </project>
